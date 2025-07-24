@@ -1,17 +1,35 @@
 # Building XIOS 3 on ARCHER2 using GCC
 
-You need to load the following modules:
+## Load Required Modules
+
+```bash
 module -q load PrgEnv-gnu
 module -q load cray-hdf5-parallel
 module -q load cray-netcdf-hdf5parallel
+```
 
+## Download XIOS 3
+
+```bash
 mkdir XIOS_3
-
 svn checkout https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/trunk xios-3.0
+```
 
-Add the following files:
+## Create Architecture Files
 
-arch-ARCHER2_GNU.path
+Navigate to the `arch/` directory:
+
+```bash
+cd xios-3.0/arch/
+```
+
+Create the following files with the respective content:
+
+---
+
+### `arch-ARCHER2_GNU.path`
+
+```bash
 NETCDF_INCDIR="-I $NETCDF_INC_DIR"
 NETCDF_LIBDIR="-L $NETCDF_LIB_DIR"
 NETCDF_LIB="-lnetcdff -lnetcdf"
@@ -31,8 +49,13 @@ BOOST_LIB=""
 OASIS_INCDIR="-I$PWD/../../oasis3-mct/BLD/build/lib/psmile.MPI1"
 OASIS_LIBDIR="-L$PWD/../../oasis3-mct/BLD/lib"
 OASIS_LIB="-lpsmile.MPI1 -lscrip -lmct -lmpeu"
+```
 
-arch-ARCHER2_GNU.fcm
+---
+
+### `arch-ARCHER2_GNU.fcm`
+
+```fcm
 %CCOMPILER      CC
 %FCOMPILER      ftn
 %LINKER         ftn  
@@ -53,8 +76,13 @@ arch-ARCHER2_GNU.fcm
 %CPP            cpp
 %FPP            cpp -P
 %MAKE           gmake
+```
 
-arch-ARCHER2_GNU.env
+---
+
+### `arch-ARCHER2_GNU.env`
+
+```bash
 export HDF5_INC_DIR=$HOME/hdf5/hdf5/include
 export HDF5_LIB_DIR=$HOME/hdf5/hdf5/lib
 
@@ -63,6 +91,17 @@ export NETCDF_LIB_DIR=$HOME/netcdf4/lib
 
 export BOOST_INC_DIR=$HOME/boost
 export BOOST_LIB_DIR=$HOME/boost
+```
 
-Then build in xios-3.0/ with this command: 
-./make_xios --verbose --fcm new  --job 8  --dev --arch ARCHER2_GNU 2>&1 | tee compile.log
+---
+
+## Build XIOS
+
+From the root directory of XIOS:
+
+```bash
+cd /path/to/xios-3.0
+./make_xios --verbose --fcm new --job 8 --dev --arch ARCHER2_GNU 2>&1 | tee compile.log
+```
+
+It should compile and link without errors.
